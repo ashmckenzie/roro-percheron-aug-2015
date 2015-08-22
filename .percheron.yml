@@ -1,0 +1,49 @@
+---
+stacks:
+- name: roro
+  units:
+
+  - name: base
+    version: 1.0.0
+    dockerfile: _base/Dockerfile
+    startable: false
+
+  - name: postfix
+    version: 1.0.0
+    dockerfile: postfix/Dockerfile
+    # volumes:
+    #   - /Users/ash/src/presentations/roro-perheron-aug-2015/app/code:/app
+    needed_unit_names:
+      - base
+
+  - name: redis
+    version: 1.0.0
+    dockerfile: redis/Dockerfile
+    # volumes:
+    #   - /Users/ash/src/presentations/roro-perheron-aug-2015/app/code:/app
+    needed_unit_names:
+      - base
+
+  - name: postgres
+    version: 1.0.0
+    dockerfile: postgres/Dockerfile
+    # volumes:
+    #   - /Users/ash/src/presentations/roro-perheron-aug-2015/app/code:/app
+    needed_unit_names:
+      - base
+
+  - name: app
+    version: 1.0.0
+    dockerfile: app/Dockerfile
+    # volumes:
+    #   - /Users/ash/src/presentations/roro-perheron-aug-2015/app/code:/app
+    ports:
+      - '5000:5000'
+    # env:
+      # - RAILS_ENV="production"
+      # - SERVER="puma"
+    needed_unit_names:
+      - base
+      - postgres
+      - redis
+      - postfix
