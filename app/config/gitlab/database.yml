@@ -1,0 +1,19 @@
+base: &base
+  adapter:  postgresql
+  encoding: unicode
+  host:     "#{ENV['DB_HOST']}"
+  database: "#{ENV['DB_NAME']}"
+  username: "#{ENV['DB_USERNAME']}"
+  password: "#{ENV['DB_PASSWORD']}"
+
+production:
+  <<: *base
+  pool: 10
+
+development:
+  <<: *base
+  pool: 5
+
+staging:
+  <<: *base
+  pool: 5

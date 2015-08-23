@@ -1,4 +1,14 @@
 ---
+secrets_file: ./.secrets.yml
+
+userdata:
+  email_from: ash@the-rebellion.net
+  email_display_name: GitLab
+  email_reply_to: ash@the-rebellion.net
+  db_host: postgres
+  db_name: gitlab
+  db_username: gitlab
+
 stacks:
 - name: roro
   units:
@@ -39,7 +49,15 @@ stacks:
     #   - /Users/ash/src/presentations/roro-perheron-aug-2015/app/code:/app
     ports:
       - '5000:5000'
-    # env:
+    env:
+      - DB_HOST="{{ userdata.db_host }}"
+      - DB_NAME="{{ userdata.db_name }}"
+      - DB_USERNAME="{{ userdata.db_username }}"
+      - DB_PASSWORD="{{ secrets.db_password }}"
+      - GITLAB_EMAIL_FROM="{{ userdata.email_from }}"
+      - GITLAB_EMAIL_DISPLAY_NAME="{{ userdata.email_display_name }}"
+      - GITLAB_EMAIL_REPLY_TO="{{ userdata.email_reply_to }}"
+
       # - RAILS_ENV="production"
       # - SERVER="puma"
     needed_unit_names:
