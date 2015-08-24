@@ -72,6 +72,7 @@ stacks:
     dockerfile: gitlab/Dockerfile
     ports:
       - '5000:5000'
+      - '22:22'
     env:
       - PORT=5000
       - RAILS_ENV={{ userdata.rails.env }}
