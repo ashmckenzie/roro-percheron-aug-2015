@@ -1,1 +1,0 @@
-worker: su git -c 'bundle exec sidekiq -q post_receive -q mailer -q archive_repo -q system_hook -q project_web_hook -q common -q default'
