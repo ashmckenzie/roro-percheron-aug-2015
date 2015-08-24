@@ -71,7 +71,8 @@ stacks:
     ports:
       - '5000:5000'
     env:
-      - RAILS_ENV=development
+      - PORT=5000
+      - RAILS_ENV=production
       - REDIS_HOST={{ userdata.redis.host }}
       - REDIS_PORT={{ userdata.redis.port }}
       - POSTGRES_HOST={{ userdata.postgres.host }}

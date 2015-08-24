@@ -1,10 +1,16 @@
 #!/bin/bash
 
-# cd /app
-# foreman start
+if [ !-f "${APP_HOME}/.bootstrapped" ]; then
+  su git -c "force=yes bundle exec rake gitlab:setup"
+  su git -c "bundle exec rake assets:precompile"
+  touch ${APP_HOME}/.bootstrapped
+fi
 
 while true
 do
   date
   sleep 1
 done
+
+# cd ${APP_HOME}
+# foreman start
