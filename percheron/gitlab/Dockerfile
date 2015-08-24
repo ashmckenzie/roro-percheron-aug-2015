@@ -20,7 +20,7 @@ RUN cd /tmp && tar xzvf v${LIBGIT_TWO_VERSION}.tar.gz
 RUN cd /tmp/libgit2-${LIBGIT_TWO_VERSION} && mkdir build && cd build && CFLAGS="-D__gnu_hurd__" cmake .. && \
 CFLAGS="-D__gnu_hurd__" cmake --build . --target install
 
-RUN mkdir ${APP_HOME} ${DATA_HOME}
+RUN mkdir -p ${APP_HOME} ${APP_HOME}/public/assets ${DATA_HOME}
 WORKDIR ${APP_HOME}
 
 RUN bundle config build.nokogiri "--use-system-libraries"
@@ -29,29 +29,29 @@ ADD gitlab/Gemfile* ${APP_HOME}/
 RUN CFLAGS="-L/usr/local/lib -I/usr/local/include" bundle install -j4 --without="mysql kerberos"
 
 ADD gitlab/ ${APP_HOME}/
-RUN chown -R git tmp log && chmod -R u+rwX,go-w log && chmod -R u+rwX tmp tmp/pids tmp/sockets public/uploads
+RUN chown -R git tmp log public/assets && chmod -R u+rwX,go-w log && chmod -R u+rwX tmp tmp/pids tmp/sockets public/uploads
 
+ADD ./config/gitlab/secrets.yml ${APP_HOME}/config/secrets.yml
 ADD ./config/gitlab/database.yml ${APP_HOME}/config/database.yml
 ADD ./config/gitlab/gitlab.yml ${APP_HOME}/config/gitlab.yml
 ADD ./config/gitlab/resque.yml ${APP_HOME}/config/resque.yml
 ADD ./config/gitlab/unicorn.rb ${APP_HOME}/config/unicorn.rb
 ADD ./config/gitlab/rack_attack.rb ${APP_HOME}/config/initializers/rack_attack.rb
 
-RUN sed -i 's%<POSTGRES_HOST>%{{ userdata.postgres.host }}%' ${APP_HOME}/config/database.yml
-RUN sed -i 's%<POSTGRES_PORT>%{{ userdata.postgres.port }}%' ${APP_HOME}/config/database.yml
-RUN sed -i 's%<POSTGRES_NAME>%{{ userdata.postgres.name }}%' ${APP_HOME}/config/database.yml
-RUN sed -i 's%<POSTGRES_USERNAME>%{{ userdata.postgres.username }}%' ${APP_HOME}/config/database.yml
-RUN sed -i 's%<POSTGRES_PASSWORD>%{{ secrets.postgres.password }}%' ${APP_HOME}/config/database.yml
+# RUN sed -i 's%<POSTGRES_HOST>%{{ userdata.postgres.host }}%' ${APP_HOME}/config/database.yml
+# RUN sed -i 's%<POSTGRES_PORT>%{{ userdata.postgres.port }}%' ${APP_HOME}/config/database.yml
+# RUN sed -i 's%<POSTGRES_NAME>%{{ userdata.postgres.name }}%' ${APP_HOME}/config/database.yml
+# RUN sed -i 's%<POSTGRES_USERNAME>%{{ userdata.postgres.username }}%' ${APP_HOME}/config/database.yml
+# RUN sed -i 's%<POSTGRES_PASSWORD>%{{ secrets.postgres.password }}%' ${APP_HOME}/config/database.yml
 
 RUN sed -i 's%<REDIS_HOST>%{{ userdata.redis.host }}%' ${APP_HOME}/config/resque.yml
 RUN sed -i 's%<REDIS_PORT>%{{ userdata.redis.port }}%' ${APP_HOME}/config/resque.yml
 
-RUN sed -i 's%<GITLAB_EMAIL_FROM>%{{ userdata.gitlab.email_from }}%' ${APP_HOME}/config/gitlab.yml
-RUN sed -i 's%<GITLAB_EMAIL_DISPLAY_NAME>%{{ userdata.gitlab.email_display_name }}%' ${APP_HOME}/config/gitlab.yml
-RUN sed -i 's%<GITLAB_EMAIL_REPLY_TO>%{{ userdata.gitlab.email_reply_to }}%' ${APP_HOME}/config/gitlab.yml
+# RUN sed -i 's%<GITLAB_EMAIL_FROM>%{{ userdata.gitlab.email_from }}%' ${APP_HOME}/config/gitlab.yml
+# RUN sed -i 's%<GITLAB_EMAIL_DISPLAY_NAME>%{{ userdata.gitlab.email_display_name }}%' ${APP_HOME}/config/gitlab.yml
+# RUN sed -i 's%<GITLAB_EMAIL_REPLY_TO>%{{ userdata.gitlab.email_reply_to }}%' ${APP_HOME}/config/gitlab.yml
 
-RUN touch ${APP_HOME}/.secret ${APP_HOME}/.gitlab_shell_secret && \
-chown git ${APP_HOME}/.secret ${APP_HOME}/.gitlab_shell_secret
+RUN touch .secret .gitlab_shell_secret && chown git .secret .gitlab_shell_secret
 RUN su git -c 'bundle exec rake gitlab:shell:install[{{ userdata.gitlab.shell_version }}]'
 
 ADD ./config/start /start

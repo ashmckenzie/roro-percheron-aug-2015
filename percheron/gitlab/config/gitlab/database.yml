@@ -1,11 +1,11 @@
 base: &base
   adapter:  postgresql
   encoding: unicode
-  host:     <POSTGRES_HOST>
-  port:     <POSTGRES_PORT>
-  database: <POSTGRES_NAME>
-  username: <POSTGRES_USERNAME>
-  password: <POSTGRES_PASSWORD>
+  host:     <%= ENV['POSTGRES_HOST'] %>
+  port:     <%= ENV['POSTGRES_PORT'] %>
+  database: <%= ENV['POSTGRES_NAME'] %>
+  username: <%= ENV['POSTGRES_USERNAME'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
 
 production:
   <<: *base
