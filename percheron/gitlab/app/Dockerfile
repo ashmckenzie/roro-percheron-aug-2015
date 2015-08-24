@@ -1,9 +1,12 @@
 FROM gitlab_base:1.0.0
 MAINTAINER ash@the-rebellion.net
 
+RUN apk --update-cache add redis
+
+ENV APP_HOME {{ userdata.gitlab.app_home }}
+
 ADD ./config/Procfile ${APP_HOME}/Procfile
 RUN mkdir -p log tmp/assets public/assets && chown -R git ${APP_HOME}/
-RUN chmod -R u+rwX,go-w log && chmod -R u+rwX tmp tmp/pids tmp/sockets public/uploads
 RUN su git -c 'bundle exec rake gitlab:shell:install[{{ userdata.gitlab.shell_version }}]'
 
 ADD ./config/start /start

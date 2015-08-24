@@ -10,6 +10,9 @@ RUN gem install bundler foreman
 RUN adduser -s /bin/bash -h /home/git -D -S git && passwd -u git
 RUN su - git -c "git config --global core.autocrlf input"
 
+ADD ./config/sshd_config /etc/ssh/sshd_config
+RUN /usr/bin/ssh-keygen -A
+
 ENV APP_HOME {{ userdata.gitlab.app_home }}
 ENV DATA_HOME {{ userdata.gitlab.data_home }}
 ENV REDIS_URL "redis://{{ userdata.redis.host }}:{{ userdata.redis.port }}"
@@ -27,20 +30,11 @@ WORKDIR ${APP_HOME}
 
 RUN bundle config build.nokogiri "--use-system-libraries"
 RUN bundle config build.rugged "--use-system-libraries"
-# ADD gitlab/Gemfile* ${APP_HOME}/
-# RUN CFLAGS="-L/usr/local/lib -I/usr/local/include" bundle install -j4 --without="mysql kerberos"
 
-# ADD gitlab/ ${APP_HOME}/
-# RUN rm -rf Gemfile* .bundle public && su git -c "git clone https://gitlab.com/gitlab-org/gitlab-ce.git -b ${GITLAB_VERSION} ."
-# RUN su git -c "git clone https://gitlab.com/gitlab-org/gitlab-ce.git -b ${GITLAB_VERSION} ."
 RUN curl -L https://gitlab.com/gitlab-org/gitlab-ce/repository/archive.tar.gz?ref=v${GITLAB_VERSION} | tar --strip-components 1 -xzf -
-RUN mkdir -p public/assets
-# RUN mkdir -p log tmp/assets public/assets && chown -R git ${APP_HOME}/
+RUN mkdir -p log tmp/assets public/assets && chown -R git ${APP_HOME}/
 RUN chmod -R u+rwX,go-w log && chmod -R u+rwX tmp tmp/pids tmp/sockets public/uploads
 RUN CFLAGS="-L/usr/local/lib -I/usr/local/include" bundle install -j4 --without="mysql kerberos"
-
-ADD ./config/sshd_config /etc/ssh/sshd_config
-RUN /usr/bin/ssh-keygen -A
 
 ADD ./config/gitlab/secrets.yml ${APP_HOME}/config/secrets.yml
 ADD ./config/gitlab/database.yml ${APP_HOME}/config/database.yml
