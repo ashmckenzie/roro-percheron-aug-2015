@@ -6,7 +6,7 @@ ENV TERM ansi
 ENV PGBASE "/var/lib/postgresql"
 ENV PGDATA "${PGBASE}/data"
 
-RUN apk add --update-cache postgresql
+RUN apk add --update-cache bash postgresql
 RUN mkdir -p ${PGDATA}
 
 ADD ./config/start /start

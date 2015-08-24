@@ -3,7 +3,7 @@ MAINTAINER ash@the-rebellion.net
 
 ENV TERM ansi
 
-RUN apk add --update-cache redis
+RUN apk add --update-cache bash redis
 
 ADD ./config/start /start
 RUN chmod 755 /start
