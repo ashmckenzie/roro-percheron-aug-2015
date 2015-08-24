@@ -35,6 +35,7 @@ RUN bundle config build.rugged "--use-system-libraries"
 # RUN su git -c "git clone https://gitlab.com/gitlab-org/gitlab-ce.git -b ${GITLAB_VERSION} ."
 RUN curl -L https://gitlab.com/gitlab-org/gitlab-ce/repository/archive.tar.gz?ref=v${GITLAB_VERSION} | tar --strip-components 1 -xzf -
 RUN mkdir -p public/assets
+# RUN mkdir -p log tmp/assets public/assets && chown -R git ${APP_HOME}/
 RUN chmod -R u+rwX,go-w log && chmod -R u+rwX tmp tmp/pids tmp/sockets public/uploads
 RUN CFLAGS="-L/usr/local/lib -I/usr/local/include" bundle install -j4 --without="mysql kerberos"
 
