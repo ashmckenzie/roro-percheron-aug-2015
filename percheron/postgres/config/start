@@ -6,8 +6,8 @@ if [ -z "$(ls -A "$PGDATA")" ]; then
   su postgres -c 'initdb'
   sed -ri "s/^#(listen_addresses\s*=\s*)\S+/\1'*'/" "${PGDATA}"/postgresql.conf
 
-  echo "CREATE DATABASE ${DB_NAME};" | su postgres -c 'postgres --single -jE'
-  echo "CREATE USER ${DB_USERNAME} WITH SUPERUSER PASSWORD '${DB_PASSWORD}';" | su postgres -c 'postgres --single -jE'
+  echo "CREATE DATABASE ${POSTGRES_NAME};" | su postgres -c 'postgres --single -jE'
+  echo "CREATE USER ${POSTGRES_USERNAME} WITH SUPERUSER PASSWORD '${POSTGRES_PASSWORD}';" | su postgres -c 'postgres --single -jE'
 
   echo "host all all 0.0.0.0/0 md5" >> ${PGDATA}/pg_hba.conf
 fi

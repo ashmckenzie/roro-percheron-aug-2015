@@ -1,2 +1,3 @@
 .envrc
 .secrets.yml
+Dockerfile.generated.*

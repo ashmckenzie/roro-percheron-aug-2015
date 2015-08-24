@@ -2,15 +2,22 @@
 secrets_file: ./.secrets.yml
 
 userdata:
+  libgit_two_version: "0.22.2"
   gitlab:
+    app_home: /app
+    data_home: /data
     shell_version: v2.6.4
     email_from: ash@the-rebellion.net
     email_display_name: GitLab
     email_reply_to: ash@the-rebellion.net
-  redis_host: roro_redis
-  db_host: roro_postgres
-  db_name: gitlab
-  db_username: gitlab
+  redis:
+    host: roro_redis
+    port: 6379
+  postgres:
+    host: roro_postgres
+    port: 5432
+    name: gitlab
+    username: gitlab
 
 stacks:
 - name: gliderlabs
@@ -34,8 +41,6 @@ stacks:
   - name: postfix
     version: 1.0.0
     dockerfile: postfix/Dockerfile
-    # volumes:
-    #   - /Users/ash/src/presentations/roro-perheron-aug-2015/app/code:/app
     needed_unit_names:
       - base
       # - gliderlabs:resolvable
@@ -43,8 +48,8 @@ stacks:
   - name: redis
     version: 1.0.0
     dockerfile: redis/Dockerfile
-    # volumes:
-    #   - /Users/ash/src/presentations/roro-perheron-aug-2015/app/code:/app
+    env:
+      - REDIS_PORT={{ userdata.redis.port }}
     needed_unit_names:
       - base
 
@@ -56,25 +61,28 @@ stacks:
     needed_unit_names:
       - base
     env:
-      - DB_NAME={{ userdata.db_name }}
-      - DB_USERNAME={{ userdata.db_username }}
-      - DB_PASSWORD={{ secrets.db_password }}
+      - POSTGRES_NAME={{ userdata.db_name }}
+      - POSTGRES_USERNAME={{ userdata.postgres.username }}
+      - POSTGRES_PASSWORD={{ secrets.postgres.password }}
 
-  - name: app
+  - name: gitlab
     version: 1.0.0
-    dockerfile: app/Dockerfile
-    # volumes:
-    #   - /Users/ash/src/presentations/roro-perheron-aug-2015/app/code:/app
+    dockerfile: gitlab/Dockerfile
     ports:
       - '5000:5000'
     env:
       - RAILS_ENV=development
-      - REDIST_HOST={{ userdata.redis_host }}
-      - DB_HOST={{ userdata.db_host }}
-      - DB_NAME={{ userdata.db_name }}
-      - DB_USERNAME={{ userdata.db_username }}
-      - DB_PASSWORD={{ secrets.db_password }}
+      - REDIS_HOST={{ userdata.redis.host }}
+      - REDIS_PORT={{ userdata.redis.port }}
+      - POSTGRES_HOST={{ userdata.postgres.host }}
+      - POSTGRES_PORT={{ userdata.postgres.port }}
+      - POSTGRES_NAME={{ userdata.postgres.name }}
+      - POSTGRES_USERNAME={{ userdata.postgres.username }}
+      - POSTGRES_PASSWORD={{ secrets.postgres.password }}
+      - GITLAB_APP_HOME={{ userdata.gitlab.app_home }}
+      - GITLAB_DATA_HOME={{ userdata.gitlab.data_home }}
       - GITLAB_SHELL_VERSION={{ userdata.gitlab.shell_version }}
+      - GITLAB_ROOT_PASSWORD={{ secrets.gitlab.root_password }}
       - GITLAB_EMAIL_FROM={{ userdata.gitlab.email_from }}
       - GITLAB_EMAIL_DISPLAY_NAME={{ userdata.gitlab.email_display_name }}
       - GITLAB_EMAIL_REPLY_TO={{ userdata.gitlab.email_reply_to }}

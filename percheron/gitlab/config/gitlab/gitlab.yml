@@ -14,9 +14,9 @@ base: &base
 
     ## Email settings
     email_enabled: false
-    email_from: "#{ENV['GITLAB_EMAIL_FROM']}"
-    email_display_name: "#{ENV['GITLAB_EMAIL_DISPLAY_NAME']}"
-    email_reply_to: "#{ENV['GITLAB_EMAIL_REPLY_TO']}"
+    email_from: <GITLAB_EMAIL_FROM>
+    email_display_name: <GITLAB_EMAIL_DISPLAY_NAME>
+    email_reply_to: <GITLAB_EMAIL_REPLY_TO>
 
     # default_can_create_group: false  # default: true
     # username_changing_enabled: false # default: true - User can change her username/namespace
