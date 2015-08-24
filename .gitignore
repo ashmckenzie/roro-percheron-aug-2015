@@ -1,3 +1,5 @@
+.ssh
 .envrc
 .secrets.yml
 Dockerfile.generated.*
+tmp

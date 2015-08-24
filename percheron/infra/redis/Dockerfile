@@ -1,7 +1,9 @@
-FROM roro_base:1.0.0
+FROM gliderlabs/alpine:latest
 MAINTAINER ash@the-rebellion.net
 
-RUN apk add --update-cache postfix
+ENV TERM ansi
+
+RUN apk add --update-cache redis
 
 ADD ./config/start /start
 RUN chmod 755 /start

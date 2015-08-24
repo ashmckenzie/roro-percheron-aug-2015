@@ -1,11 +1,12 @@
-FROM roro_base:1.0.0
+FROM gliderlabs/alpine:latest
 MAINTAINER ash@the-rebellion.net
 
-RUN apk add --update-cache postgresql
+ENV TERM ansi
 
 ENV PGBASE "/var/lib/postgresql"
 ENV PGDATA "${PGBASE}/data"
 
+RUN apk add --update-cache postgresql
 RUN mkdir -p ${PGDATA}
 
 ADD ./config/start /start

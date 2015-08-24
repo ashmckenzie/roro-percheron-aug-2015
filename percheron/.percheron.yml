@@ -6,17 +6,21 @@ userdata:
   rails:
     env: production
   gitlab:
+    # version: 7-14-stable
+    version: 7.14.0
+    host: docker-local
+    port: 5000
     app_home: /app
     data_home: /data
-    shell_version: v2.6.4
+    shell_version: v2.6.3
     email_from: ash@the-rebellion.net
     email_display_name: GitLab
     email_reply_to: ash@the-rebellion.net
   redis:
-    host: roro_redis
+    host: infra_redis
     port: 6379
   postgres:
-    host: roro_postgres
+    host: infra_postgres
     port: 5432
     name: gitlab
     username: gitlab
@@ -33,66 +37,89 @@ stacks:
         - /var/run/docker.sock:/tmp/docker.sock
         - /etc/resolv.conf:/tmp/resolv.conf
 
-- name: roro
+- name: common
   units:
-  - name: base
-    version: 1.0.0
-    dockerfile: _base/Dockerfile
-    startable: false
+    - name: base
+      version: 1.0.0
+      dockerfile: _base/Dockerfile
+      startable: false
 
-  - name: postfix
-    version: 1.0.0
-    dockerfile: postfix/Dockerfile
-    needed_unit_names:
-      - base
-      # - gliderlabs:resolvable
+- name: infra
+  description: Infrastructure based units
+  units:
+    - name: postfix
+      version: 1.0.0
+      dockerfile: infra/postfix/Dockerfile
+      # needed_unit_names:
+        # - gliderlabs:resolvable
 
-  - name: redis
-    version: 1.0.0
-    dockerfile: redis/Dockerfile
-    env:
-      - REDIS_PORT={{ userdata.redis.port }}
-    needed_unit_names:
-      - base
+    - name: redis
+      version: 1.0.0
+      dockerfile: infra/redis/Dockerfile
+      env:
+        - REDIS_PORT={{ userdata.redis.port }}
+      # needed_unit_names:
+        # - gliderlabs:resolvable
 
-  - name: postgres
-    version: 1.0.0
-    dockerfile: postgres/Dockerfile
-    volumes:
-      - /data/roro/postgres/data:/var/lib/postgresql/data
-    needed_unit_names:
-      - base
-    env:
-      - POSTGRES_NAME={{ userdata.db_name }}
-      - POSTGRES_USERNAME={{ userdata.postgres.username }}
-      - POSTGRES_PASSWORD={{ secrets.postgres.password }}
+    - name: postgres
+      version: 1.0.0
+      dockerfile: infra/postgres/Dockerfile
+      volumes:
+        - /data/roro/postgres/data:/var/lib/postgresql/data
+      # needed_unit_names:
+        # - gliderlabs:resolvable
+      env:
+        - POSTGRES_NAME={{ userdata.db_name }}
+        - POSTGRES_USERNAME={{ userdata.postgres.username }}
+        - POSTGRES_PASSWORD={{ secrets.postgres.password }}
 
-  - name: gitlab
-    version: 1.0.0
-    dockerfile: gitlab/Dockerfile
-    ports:
-      - '5000:5000'
-      - '22:22'
-    env:
-      - PORT=5000
-      - RAILS_ENV={{ userdata.rails.env }}
-      - RAILS_SECRET_KEY_BASE={{ secrets.rails.secret_key_base }}
-      - REDIS_HOST={{ userdata.redis.host }}
-      - REDIS_PORT={{ userdata.redis.port }}
-      - POSTGRES_HOST={{ userdata.postgres.host }}
-      - POSTGRES_PORT={{ userdata.postgres.port }}
-      - POSTGRES_NAME={{ userdata.postgres.name }}
-      - POSTGRES_USERNAME={{ userdata.postgres.username }}
-      - POSTGRES_PASSWORD={{ secrets.postgres.password }}
-      - GITLAB_APP_HOME={{ userdata.gitlab.app_home }}
-      - GITLAB_DATA_HOME={{ userdata.gitlab.data_home }}
-      - GITLAB_SHELL_VERSION={{ userdata.gitlab.shell_version }}
-      - GITLAB_ROOT_PASSWORD={{ secrets.gitlab.root_password }}
-      - GITLAB_EMAIL_FROM={{ userdata.gitlab.email_from }}
-      - GITLAB_EMAIL_DISPLAY_NAME={{ userdata.gitlab.email_display_name }}
-      - GITLAB_EMAIL_REPLY_TO={{ userdata.gitlab.email_reply_to }}
-    needed_unit_names:
-      - base
-      - postgres
-      - redis
-      - postfix
+- name: gitlab
+  units:
+    - name: base
+      version: 1.0.0
+      dockerfile: gitlab/_base/Dockerfile
+      startable: false
+
+    - name: app
+      version: 1.0.0
+      dockerfile: gitlab/app/Dockerfile
+      ports:
+        - '5000:5000'
+        - '2222:22'
+      env:
+        - PORT=5000
+        - RAILS_ENV={{ userdata.rails.env }}
+        - RAILS_SECRET_KEY_BASE={{ secrets.rails.secret_key_base }}
+        - REDIS_HOST={{ userdata.redis.host }}
+        - REDIS_PORT={{ userdata.redis.port }}
+        - POSTGRES_HOST={{ userdata.postgres.host }}
+        - POSTGRES_PORT={{ userdata.postgres.port }}
+        - POSTGRES_NAME={{ userdata.postgres.name }}
+        - POSTGRES_USERNAME={{ userdata.postgres.username }}
+        - POSTGRES_PASSWORD={{ secrets.postgres.password }}
+        - GITLAB_HOST={{ userdata.gitlab.host }}
+        - GITLAB_PORT={{ userdata.gitlab.port }}
+        - GITLAB_APP_HOME={{ userdata.gitlab.app_home }}
+        - GITLAB_DATA_HOME={{ userdata.gitlab.data_home }}
+        - GITLAB_SHELL_VERSION={{ userdata.gitlab.shell_version }}
+        - GITLAB_ROOT_PASSWORD={{ secrets.gitlab.root_password }}
+        - GITLAB_EMAIL_FROM={{ userdata.gitlab.email_from }}
+        - GITLAB_EMAIL_DISPLAY_NAME={{ userdata.gitlab.email_display_name }}
+        - GITLAB_EMAIL_REPLY_TO={{ userdata.gitlab.email_reply_to }}
+      needed_unit_names:
+        - base
+        # - gliderlabs:resolvable
+        # - infra:postgres
+        # - infra:redis
+        # - infra:postfix
+
+    - name: worker
+      version: 1.0.0
+      dockerfile: gitlab/worker/Dockerfile
+      needed_unit_names:
+        - base
+        - app
+        # - gliderlabs:resolvable
+        # - infra:postgres
+        # - infra:redis
+        # - infra:postfix

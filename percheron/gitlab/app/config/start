@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cd ${APP_HOME}
+
+if [ ! -f ".bootstrapped" ]; then
+  su git -c "force=yes bundle exec rake gitlab:setup"
+  su git -c "bundle exec rake assets:precompile"
+  touch .bootstrapped
+fi
+
+foreman start
