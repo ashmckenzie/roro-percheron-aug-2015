@@ -77,6 +77,12 @@
         margin-top: -30px;
         overflow: hidden;
       }
+      .percheron-commands table {
+        margin-top: -20px;
+      }
+      .percheron-commands table td {
+        padding: 6px 40px 6px 0;
+      }
       .orange {
         color: rgb(255, 144, 21);
       }
@@ -105,13 +111,11 @@ class: middle, center
 
 class: middle, center
 
-# Docker 101
-
 <img src="./images/docker_logo.png" alt="Docker" />
 
 ---
 
-# Docker 101
+# Docker: 101
 
 * A toolchain around Linux Containers (LXC)
 * Docker is relatively new, LXC arrived in 2008
@@ -122,23 +126,11 @@ class: middle, center
 
 ---
 
-# Docker 101 cont'd
-
-* `Dockerfile` defines build steps
-* Docker images format:
-  * `<owner>/<name>:<version>`
-  * Owner & name required, version is optional (default `latest`)
-  * e.g. `redis/redis:latest`
-* `docker build` creates images from `Dockerfile`
-* `docker run` creates containers from images
-
----
-
 class: dockerfile-example
 
-# Dockerfile example
+# Docker: Dockerfile
 
-`Dockerfile`
+`Dockerfile` defines build steps
 
 ```shell
 FROM gliderlabs/alpine:latest
@@ -153,9 +145,29 @@ CMD [ "/usr/bin/redis-server", "--port", "6379" ]
 
 ---
 
+# Docker: Images
+
+* Naming format:
+  * `<owner>/<name>:<version>`
+  * Name required, owner & version are optional (default `latest`)
+    * `redis:latest` (official)
+    * `gliderlabs/alpine:latest` (unofficial)
+* `docker build` creates images from `Dockerfile`
+
+---
+
+# Docker: Containers
+
+* Naming format is arbitrary (default is random!)
+  * `backstabbing_mestorf`
+  * `sleepy_turing`
+* `docker run` creates containers from images
+
+---
+
 class: docker-build-example
 
-# docker build example
+# Docker: Build example
 
 ```shell
 $ docker build -t ashmckenzie/redis .
@@ -180,7 +192,7 @@ Successfully built 92de3334f006
 
 class: docker-run-example
 
-# docker run example
+# Docker: Run example
 
 ```shell
 $ docker run -ti ashmckenzie/redis
@@ -207,7 +219,7 @@ $ docker run -ti ashmckenzie/redis
 
 ---
 
-# Docker Benefits
+# Docker: Benefits
 
 * Process / application isolation (?safe/secure?)
 * Reproducability - use the *same* `Dockerfile` in dev and production!
@@ -216,7 +228,7 @@ $ docker run -ti ashmckenzie/redis
 
 ---
 
-# Docker Challenges
+# Docker: Challenges
 
 * How to manage / connect multiple containers
 * Dependency of containers
@@ -260,7 +272,7 @@ class: middle, center
   * Base image management
   * Dependency management
   * Dependency graph generation
-* Not optimised for Developer happiness
+* Optimised for developer happiness!
 
 ---
 
@@ -287,7 +299,7 @@ class: middle, center
 
 ---
 
-<h1><span class="orange">Percheron</span>: YAML sample</h1>
+<h1><span class="orange">Percheron</span>: Config</h1>
 
 ```ruby
 ---
@@ -305,20 +317,23 @@ stacks:
 
 ---
 
+class: percheron-commands
+
 <h1><span class="orange">Percheron</span>: Commands</h1>
 
-`status`
-
-```shell
-$ percheron status
-+-------+----+----------+-----+-----------+---------+------+---------+
-|                             infra-test                             |
-+-------+----+----------+-----+-----------+---------+------+---------+
-| Unit  | ID | Running? | IP  | Ports     | Volumes | Size | Version |
-+-------+----+----------+-----+-----------+---------+------+---------+
-| redis |    | -        | n/a | 6379:6379 |         |      |         |
-+-------+----+----------+-----+-----------+---------+------+---------+
-```
+<table>
+  <tr> <td>init</td><td>Initialise a new .percheron.yml</td> </tr>
+  <tr> <td>status</td><td>List stacks and its units</td> </tr>
+  <tr> <td>start</td><td>Start a stack</td> </tr>
+  <tr> <td>stop</td><td>Stop a stack</td> </tr>
+  <tr> <td>restart</td><td>Restart a stack</td> </tr>
+  <tr> <td>build</td><td>Build image(s) for a stack</td> </tr>
+  <tr> <td>create</td><td>Build image(s) & create units</td> </tr>
+  <tr> <td>purge</td><td>Purge a stack</td> </tr>
+  <tr> <td>shell</td><td>Shell into a unit</td> </tr>
+  <tr> <td>logs</td><td>Show logs for a unit</td> </tr>
+  <tr> <td>graph</td><td>Generate a stack graph</td> </tr>
+</table>
 
 ---
 
@@ -330,14 +345,6 @@ class: middle, center
 
 ---
 
-class: middle, center
-
-<br/>
-<h1>GitLab</h1>
-<img style="margin-top: -240px" src="./images/gitlab_logo.png" alt="GitLab" width="80%" />
-
----
-
 # GitLab
 
 * Hosted Git repositories (like GitHub)
@@ -346,6 +353,12 @@ class: middle, center
 * PostgresSQL
 * redis
 * postfix (SMTP)
+
+---
+
+class: middle, center
+
+<img style="margin-top: -10px" src="./images/gitlab_logo.png" alt="GitLab" width="80%" />
 
 ---
 
