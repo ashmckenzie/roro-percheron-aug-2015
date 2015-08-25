@@ -59,7 +59,8 @@
         color: #777;
         font-size: 0.5em;
         font-family: "Arial";
-        margin-top: -10px;
+        margin: -35px 0 0 0;
+        padding: 0;
       }
       .dockerfile-example pre {
         width: 610px;
@@ -75,6 +76,9 @@
         height: 520px;
         margin-top: -30px;
         overflow: hidden;
+      }
+      .orange {
+        color: rgb(255, 144, 21);
       }
     </style>
   </head>
@@ -225,7 +229,8 @@ class: middle, center
 
 # What?
 
-* Command line tool
+* Command line tool, leverages Docker API
+* Extends upon the `docker build` and `docker run` fundamentals
 * Similar in purpose to `docker-compose` (formerly `fig`)
 * Builds Docker images & creates Docker containers
 * Has a concept of Stacks (groups of containers)
@@ -244,13 +249,19 @@ class: middle, center
 # Why?
 
 * Make prototyping applications / services easier
-
+* Existing tools did not have:
+  * Base image generation
+  * Dependency management
+* To challenge myself!
 
 ---
 
-# Features
+<h1><span class="orange">Percheron</span> Features</h1>
 
+* Builds Docker images & creates Docker containers
+* Base image generation
 * Dependency management
+* Version control
 * Support for secrets and userdata
 * Dependency graph
 * Written in Ruby!
@@ -279,6 +290,17 @@ class: middle, center
 * PostgresSQL
 * redis
 * postfix (SMTP)
+
+---
+
+<h1><span class="orange">Percheron</span> Roadmap</h1>
+
+## v0.9
+
+* Improve version control
+  * Add `release` subcommand with `--patch`, <br/>`--minor` and `--major` flags
+* Add `push` subcommand which pushes Docker images up to a Docker Registry
+* Support inheriting `ENV` variables from executing shell
 
 ---
 
