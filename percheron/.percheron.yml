@@ -7,7 +7,7 @@ userdata:
     env: production
   gitlab:
     version: 7.14.0
-    host: docker-local
+    host: gitlab.192.168.99.101.xip.io
     port: 5000
     app_home: /app
     data_home: /data

@@ -33,10 +33,11 @@ RUN bundle config build.nokogiri "--use-system-libraries"
 RUN bundle config build.rugged "--use-system-libraries"
 
 RUN CFLAGS="-L/usr/local/lib -I/usr/local/include" bundle install -j4 --deployment --without="mysql kerberos"
-RUN su git -c 'bundle exec rake gitlab:shell:install[{{ userdata.gitlab.shell_version }}]'
 
 ADD ./config/start /start
 RUN chmod 755 /start
+
+WORKDIR ${APP_HOME}
 
 EXPOSE 22 5000
 

@@ -2,11 +2,13 @@
 
 cd ${APP_HOME}
 
+rsync -vax ${TMP_APP_HOME}/ .
+chown -R git ${APP_HOME}
+su git -c "bundle exec rake assets:precompile"
+
 if [ ! -f ".bootstrapped" ]; then
-  chown -R git ${APP_HOME}
-  su git -c "rsync -vax ${TMP_APP_HOME}/ ."
+  su git -c 'bundle exec rake gitlab:shell:install[${GITLAB_SHELL_VERSION}]'
   su git -c "force=yes bundle exec rake gitlab:setup"
-  su git -c "bundle exec rake assets:precompile"
   touch .bootstrapped
 fi
 
