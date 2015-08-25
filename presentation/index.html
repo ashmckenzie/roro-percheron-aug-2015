@@ -4,7 +4,7 @@
     <title>Organise your Docker containers with Percheron</title>
     <meta charset="utf-8">
     <style>
-      /*@import url(https://fonts.googleapis.com/css?family=Lora:400,700);*/
+      @import url(https://fonts.googleapis.com/css?family=Lora:400,700);
       @import url(https://fonts.googleapis.com/css?family=Roboto+Mono);
 
       /*@font-face { font-family: "Lobster Two"; src: url("./fonts/LobsterTwo-Regular.otf"); };*/
@@ -125,6 +125,10 @@ class: middle, center
 # Docker 101 cont'd
 
 * `Dockerfile` defines build steps
+* Docker images format:
+  * `<owner>/<name>:<version>`
+  * Owner & name required, version is optional (default `latest`)
+  * e.g. `redis/redis:latest`
 * `docker build` creates images from `Dockerfile`
 * `docker run` creates containers from images
 
@@ -133,6 +137,8 @@ class: middle, center
 class: dockerfile-example
 
 # Dockerfile example
+
+`Dockerfile`
 
 ```shell
 FROM gliderlabs/alpine:latest
@@ -216,6 +222,7 @@ $ docker run -ti ashmckenzie/redis
 * Dependency of containers
 * Version control
 * How do my containers connect to each other?
+* How do I manage base images?
 
 ---
 
@@ -227,7 +234,7 @@ class: middle, center
 
 ---
 
-# What?
+<h1><span class="orange">Percheron</span></h1>
 
 * Command line tool, leverages Docker API
 * Extends upon the `docker build` and `docker run` fundamentals
@@ -246,31 +253,80 @@ class: middle, center
 
 ---
 
-# Why?
+<h1><span class="orange">Percheron</span>: Why?</h1>
 
-* Make prototyping applications / services easier
+* Make prototyping applications & services easier
 * Existing tools did not have:
-  * Base image generation
+  * Base image management
   * Dependency management
-* To challenge myself!
+  * Dependency graph generation
+* Not optimised for Developer happiness
 
 ---
 
-<h1><span class="orange">Percheron</span> Features</h1>
+<h1><span class="orange">Percheron</span>: Features</h1>
 
 * Builds Docker images & creates Docker containers
-* Base image generation
-* Dependency management
+* Base image generation & dependency management
 * Version control
+* Liquid templating of `Dockerfile`
 * Support for secrets and userdata
 * Dependency graph
 * Written in Ruby!
 
 ---
 
+<h1><span class="orange">Percheron</span>: How?</h1>
+
+* Define a `.percheron.yml`
+* Similar format to `docker-compose.yml`
+* Utilise `Dockerfile`s or pull down Docker images
+* Fundamental pieces:
+  * Units (Docker container)
+  * Stacks (groups of Docker containers)
+
+---
+
+<h1><span class="orange">Percheron</span>: YAML sample</h1>
+
+```ruby
+---
+stacks:
+  - name: infra-test
+    description: Infrastructure units
+    units:
+      - name: redis
+        docker_image: redis/redis:3
+        version: 1.0.0
+        ports:
+          - 6379:6379
+        start_args: [ "redis-server", "--port", "6379" ]
+```
+
+---
+
+<h1><span class="orange">Percheron</span>: Commands</h1>
+
+`status`
+
+```shell
+$ percheron status
++-------+----+----------+-----+-----------+---------+------+---------+
+|                             infra-test                             |
++-------+----+----------+-----+-----------+---------+------+---------+
+| Unit  | ID | Running? | IP  | Ports     | Volumes | Size | Version |
++-------+----+----------+-----+-----------+---------+------+---------+
+| redis |    | -        | n/a | 6379:6379 |         |      |         |
++-------+----+----------+-----+-----------+---------+------+---------+
+```
+
+---
+
 class: middle, center
 
 # Demo
+
+## Perchercon<br/>v0.9.0
 
 ---
 
@@ -295,7 +351,7 @@ class: middle, center
 
 <h1><span class="orange">Percheron</span> Roadmap</h1>
 
-## v0.9
+## v1.0
 
 * Improve version control
   * Add `release` subcommand with `--patch`, <br/>`--minor` and `--major` flags
@@ -311,7 +367,8 @@ class: middle, center
 <h3 style="margin-top: -60px">github.com/ashmckenzie/percheron</h3>
 
     </textarea>
-    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    <!-- <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"> -->
+    <script src="./js/remark-latest.min.js">
     </script>
     <script>
       var slideshow = remark.create();
