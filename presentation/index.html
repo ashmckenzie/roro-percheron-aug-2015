@@ -4,12 +4,14 @@
     <title>Organise your Docker containers with Percheron</title>
     <meta charset="utf-8">
     <style>
-      @import url(https://fonts.googleapis.com/css?family=Lora:400,700);
-      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
-      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+      /*@import url(https://fonts.googleapis.com/css?family=Lora:400,700);*/
+      @import url(https://fonts.googleapis.com/css?family=Roboto+Mono);
 
-      @font-face { font-family: "Lobster Two"; src: url("./fonts/LobsterTwo-Regular.otf"); };
-      @font-face { font-family: "Lobster Two"; src: url("./fonts/LobsterTwo-Bold.otf"); font-weight: "bold"; };
+      /*@font-face { font-family: "Lobster Two"; src: url("./fonts/LobsterTwo-Regular.otf"); };*/
+      /*@font-face { font-family: "Lobster Two"; src: url("./fonts/LobsterTwo-Bold.otf"); font-weight: "bold"; };*/
+
+      @font-face { font-family: "Lora"; src: url("./fonts/Lora-Regular.ttf"); };
+      @font-face { font-family: "Roboto"; src: url("./fonts/Roboto-Regular.ttf"); };
       @font-face { font-family: "Bebas Neue"; src: url("./fonts/BebasNeue Regular.otf"); };
       @font-face { font-family: "Bebas Neue"; src: url("./fonts/BebasNeue Bold.otf"); font-weight: "bold"; };
 
@@ -29,7 +31,10 @@
         font-size: 5em !important;
         letter-spacing: 20px !important;
       }
-      .remark-code, .remark-inline-code { font-family: "Ubuntu Mono"; }
+      .remark-code, .remark-inline-code {
+        font-family: "Roboto Mono", monospace;
+        line-height: 28px;
+      }
       .remark-container {
         background-color: #fff;
       }
@@ -55,6 +60,21 @@
         font-size: 0.5em;
         font-family: "Arial";
         margin-top: -10px;
+      }
+      .dockerfile-example pre {
+        width: 610px;
+      }
+      .docker-build-example pre {
+        margin-top: -30px;
+        width: 600px;
+      }
+      .docker-run-example h1 {
+        margin-top: 5px;
+      }
+      .docker-run-example pre {
+        height: 520px;
+        margin-top: -30px;
+        overflow: hidden;
       }
     </style>
   </head>
@@ -89,32 +109,108 @@ class: middle, center
 
 # Docker 101
 
-* Is a toolchain around Linux Containers (LXC)
+* A toolchain around Linux Containers (LXC)
 * Docker is relatively new, LXC arrived in 2008
-* Consists of
+* Fundamental pieces of Docker are:
+  * The `Dockerfile`
   * images (O/S disk)
   * containers (a running O/S disk)
 
 ---
 
-# Docker 102
+# Docker 101 cont'd
 
-* `Dockerfile` defines steps
-* `docker build` creates images
+* `Dockerfile` defines build steps
+* `docker build` creates images from `Dockerfile`
 * `docker run` creates containers from images
+
+---
+
+class: dockerfile-example
+
+# Dockerfile example
+
+```shell
+FROM gliderlabs/alpine:latest
+MAINTAINER ash@the-rebellion.net
+
+RUN apk add --update-cache redis
+
+EXPOSE 6379
+
+CMD [ "/usr/bin/redis-server", "--port", "6379" ]
+```
+
+---
+
+class: docker-build-example
+
+# docker build example
+
+```shell
+$ docker build -t ashmckenzie/redis .
+Sending build context to Docker daemon 104.4 kB
+Step 0 : FROM gliderlabs/alpine:latest
+ ---> 5bd56d818842
+Step 1 : MAINTAINER ash@the-rebellion.net
+ ---> 2c21769397d4
+Step 2 : RUN apk add --update-cache redis
+ ---> Running in 4f9afbe971c6
+(1/1) Installing redis (3.0.2-r0)
+OK: 7 MiB in 16 packages
+ ---> 8d5e8b1de70a
+Step 3 : EXPOSE 6379
+ ---> 9adebad382f8
+Step 4 : CMD /usr/bin/redis-server --port 6379
+ ---> 92de3334f006
+Successfully built 92de3334f006
+```
+
+---
+
+class: docker-run-example
+
+# docker run example
+
+```shell
+$ docker run -ti ashmckenzie/redis
+                _._
+           _.-``__ ''-._
+      _.-``    `.  `_.  ''-._        Redis 3.0.2 (95eec318/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._
+ (    '      ,       .-`  | `,    )  Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|  Port: 6379
+ |    `-._   `._    /     _.-'    |  PID: 1
+  `-._    `-._  `-./  _.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |  http://redis.io
+  `-._    `-._`-.__.-'_.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |
+  `-._    `-._`-.__.-'_.-'    _.-'
+      `-._    `-.__.-'    _.-'
+          `-._        _.-'
+              `-.__.-'
+
+1:M 25 Aug 12:30:57.205 # Server started, Redis version 3.0.2
+```
 
 ---
 
 # Docker Benefits
 
-* Process isolation
+* Process / application isolation (?safe/secure?)
+* Reproducability - use the *same* `Dockerfile` in dev and production!
+* Leverage the power of hub.docker.com wich has hundreds of official / non-official images
+* Promotes 'The Twelve-Factor App' (12factor.net)
 
 ---
 
 # Docker Challenges
 
-* ENVironment variables are crucial
 * How to manage / connect multiple containers
+* Dependency of containers
+* Version control
 
 ---
 
@@ -166,12 +262,13 @@ class: middle, center
 
 <br/>
 <h1>GitLab</h1>
-<img style="margin-top: -200px" src="./images/gitlab_logo.png" alt="GitLab" width="80%" />
+<img style="margin-top: -240px" src="./images/gitlab_logo.png" alt="GitLab" width="80%" />
 
 ---
 
 # GitLab
 
+* Hosted Git repositories (like GitHub)
 * Rails 4
 * Sidekiq
 * PostgresSQL

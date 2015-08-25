@@ -9,13 +9,11 @@ ENV REDIS_URL "redis://{{ userdata.redis.host }}:{{ userdata.redis.port }}"
 ENV GITLAB_VERSION {{ userdata.gitlab.version }}
 ENV TMP_APP_HOME /tmp${APP_HOME}
 
-RUN bundle config build.nokogiri "--use-system-libraries"
-RUN bundle config build.rugged "--use-system-libraries"
-
 RUN mkdir -p ${APP_HOME} ${TMP_APP_HOME} ${DATA_HOME}
 WORKDIR ${TMP_APP_HOME}
 
 RUN wget --quiet https://gitlab.com/gitlab-org/gitlab-ce/repository/archive.tar.gz?ref=v${GITLAB_VERSION} -O - | tar --strip-components 1 -xzf -
+RUN rm -f .foreman
 RUN mkdir -p log tmp/assets public/assets && chown -R git .
 RUN chmod -R u+rwX,go-w log && chmod -R u+rwX tmp tmp/pids tmp/sockets public/uploads
 
@@ -31,9 +29,10 @@ RUN echo '{{ secrets.gitlab.shell_secret }}' > ./gitlab_shell_secret
 RUN sed -i 's%<REDIS_HOST>%{{ userdata.redis.host }}%' ./config/resque.yml
 RUN sed -i 's%<REDIS_PORT>%{{ userdata.redis.port }}%' ./config/resque.yml
 
-RUN rm -f .foreman
+RUN bundle config build.nokogiri "--use-system-libraries"
+RUN bundle config build.rugged "--use-system-libraries"
 
-RUN su git -c 'CFLAGS="-L/usr/local/lib -I/usr/local/include" bundle install -j4 --deployment --without="mysql kerberos"'
+RUN CFLAGS="-L/usr/local/lib -I/usr/local/include" bundle install -j4 --deployment --without="mysql kerberos"
 RUN su git -c 'bundle exec rake gitlab:shell:install[{{ userdata.gitlab.shell_version }}]'
 
 ADD ./config/start /start

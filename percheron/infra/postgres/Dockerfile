@@ -1,8 +1,6 @@
 FROM gliderlabs/alpine:latest
 MAINTAINER ash@the-rebellion.net
 
-ENV TERM ansi
-
 ENV PGBASE "/var/lib/postgresql"
 ENV PGDATA "${PGBASE}/data"
 
