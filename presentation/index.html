@@ -7,9 +7,6 @@
       @import url(https://fonts.googleapis.com/css?family=Lora:400,700);
       @import url(https://fonts.googleapis.com/css?family=Roboto+Mono);
 
-      /*@font-face { font-family: "Lobster Two"; src: url("./fonts/LobsterTwo-Regular.otf"); };*/
-      /*@font-face { font-family: "Lobster Two"; src: url("./fonts/LobsterTwo-Bold.otf"); font-weight: "bold"; };*/
-
       @font-face { font-family: "Lora"; src: url("./fonts/Lora-Regular.ttf"); };
       @font-face { font-family: "Roboto"; src: url("./fonts/Roboto-Regular.ttf"); };
       @font-face { font-family: "Bebas Neue"; src: url("./fonts/BebasNeue Regular.otf"); };
@@ -150,10 +147,10 @@ CMD [ "/usr/bin/redis-server", "--port", "6379" ]
 
 * Naming format:
   * `<owner>/<name>:<version>`
-  * Name required, owner & version are optional (default `latest`)
+  * Name required, owner & version are optional (default is `latest`)
     * `redis:latest` (official)
     * `gliderlabs/alpine:latest` (unofficial)
-* `docker build` creates images from `Dockerfile`
+* `docker build` creates images from `Dockerfile`s
 
 ---
 
@@ -224,8 +221,8 @@ $ docker run -ti ashmckenzie/redis
 
 * Process / application isolation (?safe/secure?)
 * Reproducability - use the *same* `Dockerfile` in dev and production!
-* Leverage the power of hub.docker.com wich has hundreds of official / non-official images
-* Promotes 'The Twelve-Factor App' (12factor.net)
+* Leverage the power of hub.docker.com which has hundreds of official / non-official images
+* Promotes use of 'The Twelve-Factor App' (12factor.net)
 
 ---
 
@@ -249,11 +246,12 @@ class: middle, center
 
 <h1><span class="orange">Percheron</span></h1>
 
+* OSS project, started in Feb 2015
 * Command line tool, leverages Docker API
-* Extends upon the `docker build` and `docker run` fundamentals
 * Similar in purpose to `docker-compose` (formerly `fig`)
+* Extends upon the `docker build` and `docker run` fundamentals
 * Builds Docker images & creates Docker containers
-* Has a concept of Stacks (groups of containers)
+* Written in Ruby!
 
 ---
 
@@ -281,11 +279,11 @@ class: middle, center
 
 * Builds Docker images & creates Docker containers
 * Base image generation & dependency management
-* Version control
+* Supports Stacks (groups of containers)
 * Liquid templating of `Dockerfile`
 * Support for secrets and userdata
-* Dependency graph
-* Written in Ruby!
+* Dependency graph generation
+* Version control
 
 ---
 

@@ -120,6 +120,6 @@ stacks:
       needed_unit_names:
         #- gliderlabs:resolvable
         - base
-        - infra:postgres
-        - infra:redis
-        - infra:postfix
+        #- infra:postgres
+        #- infra:redis
+        #- infra:postfix
