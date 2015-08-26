@@ -79,6 +79,7 @@
       }
       .percheron-commands table {
         margin-top: -20px;
+        margin-left: 160px;
       }
       .percheron-commands table td {
         padding: 6px 40px 6px 0;
@@ -341,18 +342,26 @@ class: middle, center
 
 # Demo
 
-## Perchercon<br/>v0.9.0
+## v0.9.0-dev
 
 ---
 
 # GitLab
 
-* Hosted Git repositories (like GitHub)
+* Open Source Git hosting (like GitHub)
 * Rails 4
 * Sidekiq
 * PostgresSQL
 * redis
 * postfix (SMTP)
+
+---
+
+class: middle, center
+
+## GitLab dependency diagram
+
+<img style="" src="./images/percheron_all.png" alt="GitLab with Percheron" width="80%" />
 
 ---
 
@@ -370,6 +379,7 @@ class: middle, center
   * Add `release` subcommand with `--patch`, <br/>`--minor` and `--major` flags
 * Add `push` subcommand which pushes Docker images up to a Docker Registry
 * Support inheriting `ENV` variables from executing shell
+* Bug smash!
 
 ---
 
