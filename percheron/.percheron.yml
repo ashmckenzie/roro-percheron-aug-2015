@@ -54,14 +54,14 @@ stacks:
     - name: postfix
       version: 1.0.0
       dockerfile: infra/postfix/Dockerfile
-      needed_unit_names:
-        - gliderlabs:resolvable
+      #needed_unit_names:
+        #- gliderlabs:resolvable
 
     - name: redis
       version: 1.0.0
       dockerfile: infra/redis/Dockerfile
-      needed_unit_names:
-        - gliderlabs:resolvable
+      #needed_unit_names:
+        #- gliderlabs:resolvable
       env:
         - REDIS_PORT={{ userdata.redis.port }}
 
@@ -70,8 +70,8 @@ stacks:
       dockerfile: infra/postgres/Dockerfile
       volumes:
         - /data/roro/postgres/data:/var/lib/postgresql/data
-      needed_unit_names:
-        - gliderlabs:resolvable
+      #needed_unit_names:
+        #- gliderlabs:resolvable
       env:
         - POSTGRES_NAME={{ userdata.postgres.name }}
         - POSTGRES_USERNAME={{ userdata.postgres.username }}
@@ -84,8 +84,8 @@ stacks:
       version: 1.0.0
       dockerfile: gitlab/_base/Dockerfile
       startable: false
-      needed_unit_names:
-        - common:base
+      #needed_unit_names:
+        #- common:base
 
     - name: app
       version: 1.0.0
@@ -118,7 +118,7 @@ stacks:
         - GITLAB_EMAIL_DISPLAY_NAME={{ userdata.gitlab.email_display_name }}
         - GITLAB_EMAIL_REPLY_TO={{ userdata.gitlab.email_reply_to }}
       needed_unit_names:
-        - gliderlabs:resolvable
+        #- gliderlabs:resolvable
         - base
         - infra:postgres
         - infra:redis
